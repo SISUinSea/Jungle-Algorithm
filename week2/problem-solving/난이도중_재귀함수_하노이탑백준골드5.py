@@ -49,18 +49,19 @@ str에 += 'some string'을 할 경우 해당 변수에 추가하는게 아니라
 그렇다면.. 그 과정은 누가 담당하는가? VM code를 만들 때 담당하는가? 아니면 VM -> ASM 과정에서 담당하는가? 아니라면 프로그램이 실행될 때 pvm 등에 의해 관리되는가?
 
 
-
+.join으로 모든 것을 다 계산할 때까지 저장하면 메모리가 터진다. 왜 터지는지 조사해보자.
 
 """
 import sys
-sys.setrecursionlimit(10**7)
+input = sys.stdin.readline
+write = sys.stdout.write
 
 def move(n, src, dest):
     global result
     if n > 1:
         move(n - 1, src, 6 - src - dest)
 
-    result.append(str(src) + " " + str(dest) + "\n")
+    print(f"{src} {dest}")
     if n > 1:
         move(n - 1, 6-src-dest, dest)
 
@@ -68,14 +69,10 @@ def move(n, src, dest):
 def hanoi_count(n):
     if n == 1:
         return 1
-    return hanoi_count(n - 1) *2 + 1
+    return hanoi_count(n - 1) * 2 + 1
 
 
 n = int(input())
-printable = True if n <= 20 else False
-result = []
-
-print(hanoi_count(n))
-if printable:
+write(str((1 << n) - 1) + "\n")
+if n <= 20:
     move(n, 1, 3)
-    print(''.join(result))
