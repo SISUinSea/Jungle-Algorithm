@@ -1,6 +1,6 @@
-n = int(input())
+result = 1
 
-with open("output.txt", "w", encoding="utf-8") as f:
-    f.write(str(n) + "\n")
-    for i in range(n):
-        f.write(str(4 + 2 * i) + "\n")
+for i in range(0, 15):
+    result *= (15 - 2.9 * i)
+
+print(result)
