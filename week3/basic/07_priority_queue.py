@@ -25,6 +25,7 @@
 """
 
 import heapq
+from heapq import heappush, heappop
 
 def process_emergency_room(patients):
     """
@@ -41,14 +42,19 @@ def process_emergency_room(patients):
     
     
     # TODO: 모든 환자를 힙에 추가
-    pass
+    for patient in patients:
+        heappush(heap, (patient[1], patient))
         
     processed = []
     
     # TODO: 힙이 비어있지 않은 동안 반복
     ## 힙에서 우선순위가 가장 높은 환자 꺼내기
     ## 환자 처리
-    pass
+    while heap:
+        patient = heappop(heap)[1]
+        print(f'처리: {patient[0]} (우선순위: {patient[1]})')
+        processed.append(patient[0])
+
         
     return processed
 
