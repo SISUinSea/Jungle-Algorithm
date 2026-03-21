@@ -39,22 +39,42 @@ def topological_sort(vertices, edges):
     Returns:
         위상 정렬 순서
     """
-    # TODO: 그래프와 진입 차수 초기화
-    pass
-    
-    # TODO: 그래프 구성 및 진입 차수 계산
-    pass
-    
-    # TODO: 진입 차수가 0인 정점들을 큐에 추가
-    pass
-    
+
     result = []
-    
-    # TODO: 큐가 빌 때까지 반복
-    ## 큐에서 정점 꺼내기
-    ## 인접한 정점들의 진입 차수 감소
-    pass
-    
+
+    graph = {node : [] for node in range(vertices)}
+
+    # 1. 각 vertex의 indegree를 계산한다.
+    indegree = {node : 0 for node in range(vertices)}
+    for edge in edges:
+        src, dest = edge
+        indegree[dest] += 1
+        graph[src].append(dest)
+    # print(indegree, graph)
+
+    # 2. indegree == 0인 vertices를 enque
+    queue = deque()
+    for key in indegree:
+        if indegree[key] == 0:
+            queue.append(key)
+
+    # 3. while queue
+    while queue:
+        ## 4. v = deque
+        v = queue.popleft()
+        ## 5. add to result
+        result.append(v)
+        for adj_v in graph[v]:
+            ## 6. v가 directing 하고 있던 vertices의 indegree --
+            ## 6.1 만약 indegree == 0인 vertex의 경우 enque
+            indegree[adj_v] -= 1
+            if indegree[adj_v] == 0:
+                queue.append(adj_v)
+
+    # 7. if indegree != 0인 vertex가 있다면 사이클이 존재하는 그래프!
+    if len(result) != vertices:
+        return None
+
     return result
 
 # 테스트 케이스
