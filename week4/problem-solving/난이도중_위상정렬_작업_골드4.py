@@ -3,48 +3,50 @@
 
 """
 1. 위상정렬한다.
-2. 각 작업의 종료 시각을 parent의 종료 시각과 더한다.
-3. 그 중에서 최댓값을 출력한다.
+2. queue에서 꺼낸 값은 실행 가능한 작업이므로 해당 작업 시간을 finish_times에 기록한다.
+3. 각 작업의 종료 시각을 의존성이 있는 작업들의 시작 가능 시간으로 업데이트한다.
+4. finish_times, 그 중에서 최댓값을 출력한다.
 """
 
 from collections import defaultdict, deque
 
 task_count = int(input())
 
-graph = defaultdict(list)
-# 위상정렬하기
-topo_sort_result = [0] * (task_count + 1)
+graph = [[] for _ in range(task_count + 1)]  # i에 의존하고 있는 노드들 j, k, l: graph[i] -> [j, k, l]로 표시.
+
+earliest_start_times = [0] * (task_count + 1)
+finish_times = [0] * (task_count + 1)  # i 번째의 작업이 끝나는 시각: finish_times[i]에 저장.
 req_times = [0]
 indegree = [0] * (task_count + 1)
 
 for i in range(task_count):
+    task_id = i + 1  # task가 1-based index이기 때문에 i + 1으로 고정
     task_data = list(map(int, input().split()))
     req_times.append(task_data[0])
+    indegree_count = task_data[1]
 
-    for parent_node in task_data[2:]:
-        graph[parent_node].append(i + 1)
-    indegree[i + 1] = len(task_data[2:])
+    for parent_node in task_data[2:]:  # parent_node가 task_id 작업의 선행 작업임을 표시.
+        graph[parent_node].append(task_id)
+    indegree[task_id] = indegree_count
 
 queue = deque()
-for i in range(0 + 1, task_count + 1):
-    if indegree[i] == 0:
+for task_id in range(1, task_count + 1):
+    if indegree[task_id] == 0:
         queue.append(i)
 
 while queue:
     task = queue.popleft()
     # task의 작업시간 더하기
-    topo_sort_result[task] += req_times[task]
+    finish_times[task] = earliest_start_times[task] + req_times[task]  # 이 순간, finish_times[task]는 고정됨. 종료 시각 계산 완료
     for dep_task in graph[task]:
-        # task에 의존하고 있는 작업에 task의 작업시간을 더하기
-        # task에 의존하고 있는 작업에서 task 제외하기(indegree --)
-        indegree[dep_task] -= 1
+        earliest_start_times[dep_task] = max(finish_times[task], earliest_start_times[dep_task])  # 의존하고 있는 다른 작업의 시작 시간 갱신
+        indegree[dep_task] -= 1  # 의존 제거
         ##  indegree == 0 인 경우 queue에 추가하기
         if indegree[dep_task] == 0:
-            topo_sort_result[dep_task] = max(topo_sort_result[task], topo_sort_result[dep_task])
             queue.append(dep_task)
 
 
-print((topo_sort_result))
+print(max(finish_times[1:]))
 
 
 
