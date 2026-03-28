@@ -71,6 +71,7 @@ DP가 필요한 경우:
 - 조합 최적화
 - 자원 할당
 """
+from collections import defaultdict
 
 def fibonacci_memo(n, memo=None):
     """
@@ -83,6 +84,15 @@ def fibonacci_memo(n, memo=None):
     Returns:
         n번째 피보나치 수
     """
+    if memo == None: memo = defaultdict(int)
+    if n == 0:
+        return 0
+    if n == 1:
+        return 1
+    if n in memo:
+        return memo[n]
+    memo[n] = fibonacci_memo(n - 1, memo) + fibonacci_memo(n - 2, memo)
+    return memo[n]
     # TODO: memo가 None이면 빈 딕셔너리로 초기화
     pass
     
